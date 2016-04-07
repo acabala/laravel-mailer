@@ -4,6 +4,7 @@ use DeSmart\Mailer\Attachment;
 use DeSmart\Mailer\Header;
 use DeSmart\Mailer\Job;
 use DeSmart\Mailer\Recipient;
+use DeSmart\Mailer\RecipientType;
 use DeSmart\Mailer\Variable;
 use Illuminate\Contracts\Queue\Queue;
 use PhpSpec\ObjectBehavior;
@@ -50,6 +51,7 @@ class MailerSpec extends ObjectBehavior
             'merge_vars' => [],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -82,6 +84,7 @@ class MailerSpec extends ObjectBehavior
             'merge_vars' => [],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -118,6 +121,7 @@ class MailerSpec extends ObjectBehavior
             'merge_vars' => [],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -153,6 +157,7 @@ class MailerSpec extends ObjectBehavior
             'merge_vars' => [],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -195,6 +200,7 @@ class MailerSpec extends ObjectBehavior
                 ]
             ],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -267,6 +273,7 @@ class MailerSpec extends ObjectBehavior
             ],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -304,6 +311,7 @@ class MailerSpec extends ObjectBehavior
                     'content' => 'ZXhhbXBsZTt0ZXN0Ow=='
                 ],
             ],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -333,6 +341,7 @@ class MailerSpec extends ObjectBehavior
             'merge_vars' => [],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled()->willThrow(new \Mandrill_Error);
 
         $this->shouldThrow(\Mandrill_Error::class)->during('send', ['Example subject', 'example-template']);
@@ -378,6 +387,7 @@ class MailerSpec extends ObjectBehavior
             ],
             'global_merge_vars' => [],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -418,6 +428,7 @@ class MailerSpec extends ObjectBehavior
                 ]
             ],
             'attachments' => [],
+            'preserve_recipients' => false,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -438,6 +449,7 @@ class MailerSpec extends ObjectBehavior
         $this->addGlobalVariable($variableTwo);
         $this->addLocalVariable($recipient, $variableThree);
         $this->addAttachment($attachment);
+        $this->setRecipientsPreserved(true);
 
         $this->getData()->shouldReturn([
             'from_name' => 'John Doe',
@@ -471,6 +483,7 @@ class MailerSpec extends ObjectBehavior
                     'content' => 'ZXhhbXBsZTt0ZXN0Ow=='
                 ]
             ],
+            'preserve_recipients' => true,
         ]);
     }
 
@@ -509,7 +522,8 @@ class MailerSpec extends ObjectBehavior
                     'name' => 'test.csv',
                     'content' => 'ZXhhbXBsZTt0ZXN0Ow=='
                 ]
-            ]
+            ],
+            'preserve_recipients' => true,
         ]);
 
         $mandrill->messages()->willReturn($mandrillMessages);
@@ -553,6 +567,7 @@ class MailerSpec extends ObjectBehavior
                     'content' => 'ZXhhbXBsZTt0ZXN0Ow=='
                 ]
             ],
+            'preserve_recipients' => true,
         ])->shouldBeCalled();
 
         $this->send()->shouldReturn(true);
@@ -597,7 +612,8 @@ class MailerSpec extends ObjectBehavior
                     'name' => 'test.csv',
                     'content' => 'ZXhhbXBsZTt0ZXN0Ow=='
                 ]
-            ]
+            ],
+            'preserve_recipients' => false,
         ];
 
         $this->setSubject('Example subject');
@@ -612,5 +628,43 @@ class MailerSpec extends ObjectBehavior
         $queue->pushOn('mandrill', $job)->shouldBeCalled();
 
         $this->queue()->shouldReturn(true);
+    }
+
+    public function it_should_send_email_with_preserved_recipients(
+        \Weblee\Mandrill\Mail $mandrill,
+        \Mandrill_Messages $mandrillMessages
+    ) {
+        $recipientOne = new Recipient('Jane Doe', 'janedoe@example.com');
+        $recipientTwo = new Recipient('Will Smith', 'willsmith@example.com', RecipientType::cc());
+
+        $this->addRecipient($recipientOne);
+        $this->addRecipient($recipientTwo);
+        $this->setRecipientsPreserved(true);
+
+        $mandrill->messages()->willReturn($mandrillMessages);
+        $mandrillMessages->sendTemplate('example-template', [], [
+            'subject' => 'Example subject',
+            'from_email' => 'johndoe@example.com',
+            'from_name' => 'John Doe',
+            'to' => [
+                [
+                    'email' => 'janedoe@example.com',
+                    'name' => 'Jane Doe',
+                    'type' => 'to'
+                ],
+                [
+                    'email' => 'willsmith@example.com',
+                    'name' => 'Will Smith',
+                    'type' => 'cc'
+                ]
+            ],
+            'headers' => [],
+            'merge_vars' => [],
+            'global_merge_vars' => [],
+            'attachments' => [],
+            'preserve_recipients' => true,
+        ])->shouldBeCalled();
+
+        $this->send('Example subject', 'example-template')->shouldReturn(true);
     }
 }

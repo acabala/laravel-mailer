@@ -31,6 +31,8 @@ class Mailer implements MailerInterface
     protected $localVariables = [];
     /** @var array */
     protected $attachments = [];
+    /** @var bool  */
+    protected $preserveRecipients = false;
 
     /**
      * @param \Weblee\Mandrill\Mail $mandrill
@@ -84,6 +86,15 @@ class Mailer implements MailerInterface
     public function setTemplate($template)
     {
         $this->template = $template;
+    }
+
+    /**
+     * @param bool $preserved
+     * @return void
+     */
+    public function setRecipientsPreserved($preserved)
+    {
+        $this->preserveRecipients = $preserved;
     }
 
     /**
@@ -187,6 +198,7 @@ class Mailer implements MailerInterface
             'merge_vars' => $this->getLocalVariables(),
             'global_merge_vars' => $this->getGlobalVariables(),
             'attachments' => $this->attachments,
+            'preserve_recipients' => $this->preserveRecipients,
         ];
 
         $this->mandrill->messages()->sendTemplate($this->template, [], $message);
@@ -230,6 +242,7 @@ class Mailer implements MailerInterface
             'local_vars' => $this->localVariables,
             'headers' => $this->headers,
             'attachments' => $this->attachments,
+            'preserve_recipients' => $this->preserveRecipients,
         ];
     }
 
@@ -248,6 +261,7 @@ class Mailer implements MailerInterface
         $this->localVariables = $data['local_vars'];
         $this->headers = $data['headers'];
         $this->attachments = $data['attachments'];
+        $this->preserveRecipients = $data['preserve_recipients'];
     }
 
     /**
