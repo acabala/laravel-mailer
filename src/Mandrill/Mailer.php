@@ -9,6 +9,9 @@ use DeSmart\Mailer\Variable;
 
 class Mailer implements MailerInterface
 {
+    const MERGE_VARS_LANG_MAILCHIMP = 'mailchimp';
+    const MERGE_VARS_LANG_HANDLEBARS = 'handlebars';
+
     /**  @var \Weblee\Mandrill\Mail */
     protected $mandrill;
     /** @var \Illuminate\Contracts\Queue\Queue */
@@ -33,6 +36,8 @@ class Mailer implements MailerInterface
     protected $attachments = [];
     /** @var bool  */
     protected $preserveRecipients = false;
+    /** @var string */
+    protected $mergeVarsLanguage = Mailer::MERGE_VARS_LANG_MAILCHIMP;
 
     /**
      * @param \Weblee\Mandrill\Mail $mandrill
@@ -125,6 +130,15 @@ class Mailer implements MailerInterface
     }
 
     /**
+     * @param string $mergeVarsLanguage
+     * @return void
+     */
+    public function setMergeVarsLanguage($mergeVarsLanguage)
+    {
+        $this->mergeVarsLanguage = $mergeVarsLanguage;
+    }
+
+    /**
      * @param Variable $variable
      * @return void
      */
@@ -199,6 +213,7 @@ class Mailer implements MailerInterface
             'global_merge_vars' => $this->getGlobalVariables(),
             'attachments' => $this->attachments,
             'preserve_recipients' => $this->preserveRecipients,
+            'merge_language' => $this->mergeVarsLanguage,
         ];
 
         $this->mandrill->messages()->sendTemplate($this->template, [], $message);
@@ -243,6 +258,7 @@ class Mailer implements MailerInterface
             'headers' => $this->headers,
             'attachments' => $this->attachments,
             'preserve_recipients' => $this->preserveRecipients,
+            'merge_language' => $this->mergeVarsLanguage,
         ];
     }
 
@@ -262,6 +278,7 @@ class Mailer implements MailerInterface
         $this->headers = $data['headers'];
         $this->attachments = $data['attachments'];
         $this->preserveRecipients = $data['preserve_recipients'];
+        $this->mergeVarsLanguage = $data['merge_language'];
     }
 
     /**

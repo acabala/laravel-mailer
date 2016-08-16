@@ -3,6 +3,7 @@
 use DeSmart\Mailer\Attachment;
 use DeSmart\Mailer\Header;
 use DeSmart\Mailer\Job;
+use DeSmart\Mailer\Mandrill\Mailer;
 use DeSmart\Mailer\Recipient;
 use DeSmart\Mailer\RecipientType;
 use DeSmart\Mailer\Variable;
@@ -52,6 +53,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -85,6 +87,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -122,6 +125,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -158,6 +162,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -201,6 +206,7 @@ class MailerSpec extends ObjectBehavior
             ],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -274,6 +280,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -312,6 +319,7 @@ class MailerSpec extends ObjectBehavior
                 ],
             ],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -342,6 +350,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled()->willThrow(new \Mandrill_Error);
 
         $this->shouldThrow(\Mandrill_Error::class)->during('send', ['Example subject', 'example-template']);
@@ -388,6 +397,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -429,6 +439,7 @@ class MailerSpec extends ObjectBehavior
             ],
             'attachments' => [],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
@@ -484,6 +495,7 @@ class MailerSpec extends ObjectBehavior
                 ]
             ],
             'preserve_recipients' => true,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ]);
     }
 
@@ -524,6 +536,7 @@ class MailerSpec extends ObjectBehavior
                 ]
             ],
             'preserve_recipients' => true,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ]);
 
         $mandrill->messages()->willReturn($mandrillMessages);
@@ -568,6 +581,7 @@ class MailerSpec extends ObjectBehavior
                 ]
             ],
             'preserve_recipients' => true,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send()->shouldReturn(true);
@@ -614,6 +628,7 @@ class MailerSpec extends ObjectBehavior
                 ]
             ],
             'preserve_recipients' => false,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ];
 
         $this->setSubject('Example subject');
@@ -663,6 +678,7 @@ class MailerSpec extends ObjectBehavior
             'global_merge_vars' => [],
             'attachments' => [],
             'preserve_recipients' => true,
+            'merge_language' => Mailer::MERGE_VARS_LANG_MAILCHIMP,
         ])->shouldBeCalled();
 
         $this->send('Example subject', 'example-template')->shouldReturn(true);
