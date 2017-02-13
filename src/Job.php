@@ -13,13 +13,8 @@ class Job
         $this->data = $data;
     }
 
-    /**
-     * @param MailerInterface $mailer
-     * @return bool
-     */
-    public function handle(MailerInterface $mailer)
+    public function getData()
     {
-        $mailer->setData($this->data);
-        $mailer->send();
+        return $this->data;
     }
 }
